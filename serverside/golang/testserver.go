@@ -42,6 +42,7 @@ func setCookie(w http.ResponseWriter, cookieValue string, expireTime time.Time) 
 		Value:    cookieValue,
 		Domain:   "localhost",
 		Path:     "/",
+		Secure:   true,
 		Expires:  expireTime,
 		HttpOnly: true,
 	})
@@ -63,12 +64,12 @@ func dumpCookieHandler(w http.ResponseWriter, r *http.Request) {
 
 // This is simple web server.
 func main() {
-	var httpServer http.Server
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/set_cookie", setCookieHandler)
 	http.HandleFunc("/dump_cookie", dumpCookieHandler)
 	//	http.HandleFunc("/", handlerDigest)
-	log.Println("start http listening :9090")
-	httpServer.Addr = ":9090"
-	log.Println(httpServer.ListenAndServe())
+
+	err := http.ListenAndServeTLS(":18443", "ssh/localhost.crt", "ssh/localhost.key", nil)
+	log.Println(err)
+	log.Println("start http listening :18443")
 }
